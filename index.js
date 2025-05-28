@@ -30,7 +30,7 @@ app.post("/convert", async (req, res) => {
     // Converte para .ogg com libopus
     await new Promise((resolve, reject) => {
       ffmpeg(inputPath)
-        .audioCodec('libopus')         // codec compatível com WhatsApp
+        .audioCodec("libopus")
         .audioChannels(1)
         .audioFrequency(48000)
         .format("ogg")
@@ -44,6 +44,10 @@ app.post("/convert", async (req, res) => {
     const converted = fs.readFileSync(outputPath);
     const base64Converted = `data:audio/ogg;base64,${converted.toString("base64")}`;
 
+    // 🔍 Log para depuração no Railway
+    console.log("🟢 Início do base64 convertido:", base64Converted.substring(0, 50));
+    console.log("🟢 Tamanho do base64:", base64Converted.length);
+
     // Limpa os arquivos temporários
     fs.unlinkSync(inputPath);
     fs.unlinkSync(outputPath);
@@ -52,17 +56,16 @@ app.post("/convert", async (req, res) => {
     res.json({ base64: base64Converted });
 
   } catch (error) {
-    console.error("Erro na conversão:", error);
+    console.error("❌ Erro na conversão:", error);
     res.status(500).json({ error: "Falha na conversão do áudio" });
   }
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Conversor de áudio rodando na porta ${PORT}`);
+  console.log(`🎧 Conversor de áudio rodando na porta ${PORT}`);
 });
 
 app.get("/", (req, res) => {
   res.send("✅ API de conversão de áudio ativa!");
 });
-
