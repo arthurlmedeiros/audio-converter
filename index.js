@@ -61,3 +61,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Conversor de áudio rodando na porta ${PORT}`);
 });
+
+app.get("/", (req, res) => {
+  res.send("✅ API de conversão de áudio ativa!");
+});
