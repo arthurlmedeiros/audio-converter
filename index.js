@@ -22,18 +22,18 @@ app.post("/convert", async (req, res) => {
     const buffer = Buffer.from(base64Data.split(",")[1], "base64");
 
     const inputPath = `/tmp/${uuidv4()}.mp3`;
-    const outputPath = `/tmp/${uuidv4()}_converted.mp3`;
+    const outputPath = `/tmp/${uuidv4()}_converted.ogg`;
 
-    // Salva o áudio original
+    // Salva o áudio original como .mp3
     fs.writeFileSync(inputPath, buffer);
 
-    // Reencoda com ffmpeg
+    // Converte para .ogg com libopus
     await new Promise((resolve, reject) => {
       ffmpeg(inputPath)
-        .audioChannels(1)           // mono
-        .audioFrequency(44100)      // 44.1 kHz
-        .audioBitrate("64k")        // 64kbps
-        .format("mp3")              // mp3 padrão
+        .audioCodec('libopus')         // codec compatível com WhatsApp
+        .audioChannels(1)
+        .audioFrequency(48000)
+        .format("ogg")
         .output(outputPath)
         .on("end", resolve)
         .on("error", reject)
@@ -42,7 +42,7 @@ app.post("/convert", async (req, res) => {
 
     // Lê o áudio convertido
     const converted = fs.readFileSync(outputPath);
-    const base64Converted = `data:audio/mpeg;base64,${converted.toString("base64")}`;
+    const base64Converted = `data:audio/ogg;base64,${converted.toString("base64")}`;
 
     // Limpa os arquivos temporários
     fs.unlinkSync(inputPath);
@@ -65,3 +65,4 @@ app.listen(PORT, () => {
 app.get("/", (req, res) => {
   res.send("✅ API de conversão de áudio ativa!");
 });
+
