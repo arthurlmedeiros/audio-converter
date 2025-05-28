@@ -1,6 +1,7 @@
 {
   "name": "audio-converter",
   "version": "1.0.0",
+  "description": "Conversor de áudio para Z-API via ffmpeg",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
